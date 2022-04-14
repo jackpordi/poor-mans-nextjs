@@ -1,4 +1,3 @@
-import React from "react";
 import express, { Application, Request, Response } from 'express';
 import ReactDOMServer from "react-dom/server";
 import { HomePage } from './pages';
@@ -12,9 +11,10 @@ app.get('/', (_: Request, res: Response) => {
     const stream = ReactDOMServer.renderToPipeableStream(<HomePage />, {
         onAllReady() {
             res.setHeader('Content-Type', 'text/html');
+            res.end();
         }
     });
-     stream.pipe(res, { end: false });
+    stream.pipe(res, { end: false });
 })
 
 app.listen(port, function () {
