@@ -1,6 +1,6 @@
 const Page = () => (
   <div>
-    Test page!
+    Another test page
   </div>
 );
 

@@ -9,7 +9,6 @@ module.exports = {
     "eslint:recommended",
     "airbnb-base",
     "plugin:import/typescript",
-    "plugin:@next/next/recommended",
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -137,6 +136,5 @@ module.exports = {
     "react-hooks/exhaustive-deps": "off", // Checks effect dependencies
     "no-else-return": "off",
     "consistent-return": "off",
-    "@next/next/no-img-element": "off"
   }
 };
