@@ -1,7 +1,8 @@
-const Page = () => (
+import React from "react";
+const AnotherTestPage = () => (
   <div>
     Another test page
   </div>
 );
 
-export default Page;
+export default AnotherTestPage;

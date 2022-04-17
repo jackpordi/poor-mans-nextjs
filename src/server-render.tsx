@@ -1,19 +1,22 @@
 import { ComponentType } from "react";
 import ReactDOMServer, { PipeableStream } from "react-dom/server";
+import { StaticRouter } from "react-router-dom/server";
 
-import RootApp from "./app";
+import { PageRoot } from "./app";
 
 export namespace Renderer {
 
   // For rendering per request
-  export async function renderToStream(Element: ComponentType): Promise<PipeableStream> {
+  export async function renderToStream(path: string, Element: ComponentType): Promise<PipeableStream> {
     return new Promise((resolve) => {
 
       const stream = ReactDOMServer.renderToPipeableStream(
         (
-          <RootApp>
-            <Element />
-          </RootApp>
+          <PageRoot>
+            <StaticRouter location={path}>
+              <Element />
+            </StaticRouter>
+          </PageRoot>
         ), {
           onAllReady() {
             resolve(stream);
@@ -24,11 +27,11 @@ export namespace Renderer {
   }
 
   // For rendering statically
-  export function renderStatic(Element: ComponentType) {
+  export function renderStatic(path: string, Element: ComponentType) {
     return ReactDOMServer.renderToString(
-      <RootApp>
+      <StaticRouter location={path}>
         <Element />
-      </RootApp>,
+      </StaticRouter>,
     );
   }
 }

@@ -1,10 +1,14 @@
 import fs from "fs/promises";
 
 import express, { Application, Request, Response } from "express";
+import compression from "compression";
 
 import { Renderer } from "./server-render";
+import { PageData } from "./types";
+import { AppRoutes } from "./routes";
+import { bundleWithESBuild } from "./transform";
 
-async function loadPages() {
+async function loadPages(): Promise<PageData[]> {
   const dir = await fs.readdir("./src/pages");
 
   // Only use files that are .jsx or .tsx
@@ -30,19 +34,27 @@ async function loadPages() {
   return pages;
 }
 
+
+
 const app: Application = express();
 const port = 3000;
 
 async function main() {
-  const pages = await loadPages();
 
-  for (const page of pages) {
-    app.get(page.route, async (_: Request, res: Response) => {
-      const stream = await Renderer.renderToStream(page.component);
-      res.setHeader("Content-Type", "text/html");
-      stream.pipe(res);
-    });
-  }
+  app.use(compression());
+
+  app.get("/bundle.js", async (_req: Request, res: Response) => {
+    const bundle = await bundleWithESBuild();
+    res.type(".js");
+    res.setHeader("Content-Type", "application/javascript");
+    res.send(bundle);
+  });
+
+  app.get("*", async (req: Request, res: Response) => {
+    const stream = await Renderer.renderToStream(req.url, AppRoutes);
+    res.setHeader("Content-Type", "text/html");
+    stream.pipe(res);
+  });
 
   app.listen(port, () => {
     console.log(`App is listening on port ${port}!`);
